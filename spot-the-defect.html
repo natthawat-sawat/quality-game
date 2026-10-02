@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>จับผิดภาพ – Quality Gate Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700;800&family=Sarabun:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sky1:#5FC6F2; --sky2:#BFEAFF; --sky3:#EAF8FF;
+  --navy:#173A6E; --navy2:#2B5597;
+  --orange:#FF8A1F; --orange2:#FFB347;
+  --ok:#22A55B; --ng:#E5383B; --yellow:#FFD23F;
+  --card:#FFFFFF; --ink:#1E2A3D; --muted:#5D6B82; --line:#D7E6F2;
+}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;min-height:100vh;font-family:"Sarabun",Tahoma,sans-serif;color:var(--ink);
+  background:linear-gradient(180deg,var(--sky1) 0%,var(--sky2) 45%,var(--sky3) 100%);background-attachment:fixed}
+h1,h2,h3,.k{font-family:"Kanit","Sarabun",Tahoma,sans-serif}
+button{font-family:"Kanit",Tahoma,sans-serif;cursor:pointer}
+button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible{outline:3px solid var(--orange);outline-offset:2px}
+.wrap{max-width:980px;margin:0 auto;padding:14px}
+.screen{display:none}.screen.on{display:block}
+.card{background:var(--card);border-radius:22px;box-shadow:0 6px 0 rgba(23,58,110,.12);padding:18px}
+.btn{border:0;border-radius:14px;padding:12px 20px;font-size:17px;font-weight:600;color:#fff;background:var(--orange);box-shadow:0 4px 0 #C9650C;transition:transform .08s}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 #C9650C}
+.btn.navy{background:var(--navy2);box-shadow:0 4px 0 var(--navy)}
+.btn.ghost{background:#fff;color:var(--navy);box-shadow:0 4px 0 var(--line);border:2px solid var(--line)}
+.btn.sm{padding:8px 12px;font-size:15px;border-radius:11px}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ---------- Home ---------- */
+.hero{text-align:center;padding:10px 0 4px}
+.logo{height:48px;display:none;margin:0 auto 6px}
+.hero h1{margin:0;font-size:clamp(34px,8vw,58px);line-height:1.05;color:#fff;font-weight:800;
+  text-shadow:0 4px 0 var(--navy),0 6px 14px rgba(0,0,0,.18);letter-spacing:.5px}
+.hero .sub{margin:8px auto 0;display:inline-block;background:var(--navy);color:#fff;border-radius:999px;padding:5px 16px;font-family:Kanit;font-size:15px}
+.lens{display:block;margin:14px auto 4px;width:min(280px,70vw)}
+.home-grid{display:grid;gap:14px;grid-template-columns:1fr;margin-top:8px}
+@media(min-width:760px){.home-grid{grid-template-columns:1.1fr .9fr}}
+label{display:block;font-weight:700;margin:10px 0 4px;color:var(--navy)}
+input,select,textarea{width:100%;font:inherit;font-size:17px;padding:11px 12px;border-radius:12px;border:2px solid var(--line);background:#F7FBFF;color:var(--ink)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.howto p{margin:6px 0;line-height:1.55}
+.howto b{color:var(--navy)}
+.pill{display:inline-block;border-radius:999px;padding:2px 10px;font-weight:700;font-size:14px}
+.pill.ok{background:#DDF6E7;color:#11753A}.pill.ng{background:#FFE1E1;color:#B11D20}
+
+/* ---------- Game ---------- */
+.hud{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.hud .scene-name{flex:1;min-width:180px}
+.hud .scene-name small{display:block;color:var(--muted);font-size:14px}
+.hud .scene-name b{font-family:Kanit;font-size:20px;color:var(--navy)}
+.score-box{background:var(--navy);color:#fff;border-radius:14px;padding:6px 14px;text-align:center;font-family:Kanit;min-width:90px}
+.score-box small{display:block;font-size:12px;opacity:.8}
+.score-box b{font-size:22px}
+.timer{height:12px;border-radius:999px;background:#E3EEF7;overflow:hidden;margin:4px 0 8px}
+.timer i{display:block;height:100%;width:100%;background:linear-gradient(90deg,var(--ok),var(--yellow));transition:width .25s linear}
+.timer.low i{background:var(--ng)}
+.status{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:8px;font-size:15px}
+.dots span{display:inline-block;width:16px;height:16px;border-radius:50%;border:3px solid var(--navy2);margin-right:3px;vertical-align:-3px;background:#fff}
+.dots span.got{background:var(--ok);border-color:var(--ok)}
+.hearts{letter-spacing:2px;font-size:18px}
+.status .grow{flex:1}
+.stage-scroll{border-radius:16px;overflow:auto;background:#fff;box-shadow:0 0 0 4px #fff,0 6px 0 4px rgba(23,58,110,.12);-webkit-overflow-scrolling:touch}
+.stage{position:relative;width:100%;line-height:0;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.stage.zoom{width:190%}
+.stage img{width:100%;height:auto;display:block;pointer-events:none}
+.stage.playing{cursor:crosshair}
+.mk{position:absolute;transform:translate(-50%,-50%);aspect-ratio:1;border-radius:50%;pointer-events:none}
+.mk.found{border:5px solid var(--ok);box-shadow:0 0 0 3px #fff,inset 0 0 0 3px #fff;animation:pop .35s ease-out}
+.mk.missed{border:5px dashed var(--ng);box-shadow:0 0 0 3px #fff;animation:pulse 1.2s ease-in-out infinite}
+.mk.hint{border:4px solid var(--yellow);background:rgba(255,210,63,.18);animation:fadehint 1.8s forwards}
+.mk.focus{outline:5px solid var(--orange);outline-offset:4px}
+.mk .num{position:absolute;top:-6px;right:-6px;width:26px;height:26px;border-radius:50%;background:var(--navy);color:#fff;font:700 15px/26px Kanit;text-align:center}
+.mk.found .num{background:var(--ok)}.mk.missed .num{background:var(--ng)}
+.x{position:absolute;transform:translate(-50%,-50%);font:800 34px/1 Kanit;color:var(--ng);text-shadow:0 0 0 #fff,0 0 4px #fff,0 0 8px #fff;pointer-events:none;animation:xfade 1.1s forwards}
+@keyframes pop{0%{transform:translate(-50%,-50%) scale(.4);opacity:0}100%{transform:translate(-50%,-50%) scale(1);opacity:1}}
+@keyframes pulse{50%{transform:translate(-50%,-50%) scale(1.08)}}
+@keyframes fadehint{0%{opacity:0}20%{opacity:1}80%{opacity:1}100%{opacity:0}}
+@keyframes xfade{0%{transform:translate(-50%,-50%) scale(1.4)}20%{transform:translate(-50%,-50%) scale(1)}80%{opacity:1}100%{opacity:0}}
+.stage-msg{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:20px;line-height:1.5;font-size:16px;color:var(--muted)}
+.prompt{margin:10px 2px 0;color:var(--navy);font-weight:700}
+.toast{position:fixed;left:50%;bottom:calc(18px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(calc(100% + 60px));visibility:hidden;background:var(--ok);color:#fff;border-radius:16px;padding:12px 18px;font-family:Kanit;font-size:16px;max-width:92vw;box-shadow:0 6px 18px rgba(0,0,0,.2);transition:transform .25s;z-index:50;text-align:center}
+.toast.show{transform:translateX(-50%) translateY(0);visibility:visible}
+.toast.bad{background:var(--ng)}
+.reveal{margin-top:14px}
+.reveal h2{margin:0 0 4px;color:var(--navy);font-size:22px}
+.reveal .verdict{margin:0 0 10px;color:var(--muted)}
+.ans{border:2px solid var(--line);border-radius:16px;padding:12px 14px;margin:10px 0;cursor:pointer;display:grid;grid-template-columns:34px 1fr;gap:4px 10px;background:#fff}
+.ans.on{border-color:var(--orange);background:#FFF7EE}
+.ans .n{grid-row:span 2;width:30px;height:30px;border-radius:50%;color:#fff;font:700 16px/30px Kanit;text-align:center}
+.ans.f .n{background:var(--ok)}.ans.m .n{background:var(--ng)}
+.ans .p{font-weight:700}
+.ans .fix{line-height:1.55;color:#33415A}
+.ans .fix b{color:var(--ok)}
+.next-row{display:flex;justify-content:flex-end;margin-top:12px}
+
+/* ---------- Result / Board ---------- */
+.big{font-family:Kanit;font-size:64px;font-weight:800;color:var(--orange);line-height:1;text-align:center;margin:6px 0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.stats div{background:var(--sky3);border-radius:14px;padding:10px;text-align:center}
+.stats b{display:block;font-family:Kanit;font-size:24px;color:var(--navy)}
+.stats small{color:var(--muted)}
+.medal{text-align:center;font-family:Kanit;font-size:20px;color:var(--navy);margin:4px 0 0}
+.tabs{display:flex;gap:6px;margin-bottom:10px}
+.tabs button{flex:1;border:2px solid var(--line);background:#fff;border-radius:12px;padding:8px;font-size:15px;color:var(--navy)}
+.tabs button.on{background:var(--navy);border-color:var(--navy);color:#fff}
+table{width:100%;border-collapse:collapse}
+th,td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:left;font-size:15px}
+th{color:var(--muted);font-weight:600}
+td.r,th.r{text-align:right}
+tr.me td{background:#FFF3E2;font-weight:700}
+.empty{text-align:center;color:var(--muted);padding:24px 0}
+.top-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
+.top-row h2{flex:1;margin:0;color:var(--navy)}
+
+/* ---------- Editor ---------- */
+.ed-grid{display:grid;gap:14px;grid-template-columns:1fr}
+@media(min-width:900px){.ed-grid{grid-template-columns:1.4fr 1fr}}
+.stage.edit{cursor:copy}
+.mk.ed{border:4px solid var(--orange);background:rgba(255,138,31,.12);pointer-events:auto;cursor:move;touch-action:none}
+.mk.ed.sel{border-color:var(--navy2);background:rgba(43,85,151,.18);box-shadow:0 0 0 3px #fff}
+.spot-ed{border:2px solid var(--line);border-radius:14px;padding:10px;margin:8px 0}
+.spot-ed.sel{border-color:var(--navy2)}
+.spot-ed textarea{min-height:58px;font-size:15px}
+.spot-ed input{font-size:15px}
+.code{font-family:Consolas,monospace;font-size:13px;min-height:180px;white-space:pre}
+.note{font-size:14px;color:var(--muted);line-height:1.5}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<!-- ================= HOME ================= -->
+<section id="home" class="screen on">
+  <div class="hero">
+    <img class="logo" id="logo" src="unc-logo.png" alt="UNC" onload="this.style.display='block'" onerror="this.remove()">
+    <h1>จับผิดภาพ</h1>
+    <div class="sub">SEE IT EARLY · STOP · REPORT · ACT</div>
+    <svg class="lens" viewBox="0 0 280 120" aria-hidden="true">
+      <rect x="10" y="22" width="190" height="86" rx="12" fill="#fff" stroke="#173A6E" stroke-width="4"/>
+      <rect x="26" y="68" width="38" height="30" rx="4" fill="#D8A86A" stroke="#173A6E" stroke-width="3"/>
+      <rect x="70" y="68" width="38" height="30" rx="4" fill="#D8A86A" stroke="#173A6E" stroke-width="3"/>
+      <rect x="114" y="68" width="38" height="30" rx="4" fill="#D8A86A" stroke="#173A6E" stroke-width="3"/>
+      <rect x="114" y="36" width="38" height="30" rx="4" fill="#D8A86A" stroke="#173A6E" stroke-width="3"/>
+      <rect x="120" y="42" width="14" height="9" fill="#E5383B"/>
+      <circle cx="136" cy="54" r="36" fill="rgba(255,255,255,.25)" stroke="#FF8A1F" stroke-width="9"/>
+      <line x1="162" y1="80" x2="210" y2="110" stroke="#FF8A1F" stroke-width="14" stroke-linecap="round"/>
+      <circle cx="244" cy="40" r="22" fill="#22A55B"/><path d="M233 41l8 8 14-16" stroke="#fff" stroke-width="6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </div>
+  <div class="home-grid">
+    <div class="card">
+      <h2 class="k" style="margin:0 0 4px;color:var(--navy)">ลงชื่อก่อนเล่น</h2>
+      <label for="pname">ชื่อ-ชื่อเล่น</label>
+      <input id="pname" maxlength="30" placeholder="เช่น สมชาย (หนุ่ม)">
+      <label for="pdept">แผนก</label>
+      <select id="pdept"></select>
+      <div class="row" style="margin-top:16px">
+        <button class="btn" id="startBtn" style="flex:1">เริ่มจับผิด</button>
+        <button class="btn ghost" id="boardBtn">กระดานคะแนน</button>
+      </div>
+      <p class="note" id="startErr" style="color:var(--ng);min-height:20px;margin:8px 0 0"></p>
+    </div>
+    <div class="card howto">
+      <h2 class="k" style="margin:0 0 4px;color:var(--navy)">วิธีเล่น</h2>
+      <p>แต่ละภาพมี <b>จุดที่ผิดมาตรฐาน</b> ซ่อนอยู่ แตะให้ตรงจุดเพื่อเก็บคะแนน</p>
+      <p><span class="pill ok">แตะถูก</span> +<span id="hPts">100</span> คะแนน และวงเขียวที่จุดนั้น</p>
+      <p><span class="pill ng">แตะผิด</span> ไม่ได้คะแนน และเสียโอกาส 1 ครั้ง (มี <span id="hMiss">3</span> ครั้งต่อภาพ)</p>
+      <p>เมื่อหาครบ หมดเวลา หรือหมดโอกาส ระบบจะ <b>วงเฉลยทุกจุด</b> พร้อมวิธีแก้ไขที่ถูกต้อง</p>
+      <p>หาครบทุกจุดก่อนหมดเวลา ได้โบนัสตามเวลาที่เหลือ · ใช้ปุ่ม 🔍 ขยายภาพบนมือถือ</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= GAME ================= -->
+<section id="game" class="screen">
+  <div class="card">
+    <div class="hud">
+      <div class="scene-name"><small id="gIdx">ภาพที่ 1/6</small><b id="gTitle">-</b></div>
+      <div class="score-box"><small>คะแนน</small><b id="gScore">0</b></div>
+    </div>
+    <div class="timer" id="timer"><i id="timerBar"></i></div>
+    <div class="status">
+      <div class="dots" id="gDots" aria-label="จุดที่พบ"></div>
+      <div class="hearts" id="gHearts" aria-label="โอกาสที่เหลือ"></div>
+      <div class="grow"></div>
+      <button class="btn ghost sm" id="zoomBtn" aria-pressed="false">🔍 ขยาย</button>
+      <button class="btn ghost sm" id="hintBtn">💡 ใบ้ (−<span id="hintCost">30</span>)</button>
+    </div>
+    <div class="stage-scroll"><div class="stage" id="stage"><img id="sceneImg" alt="ภาพสำหรับจับผิด"></div></div>
+    <p class="prompt" id="gPrompt">แตะจุดที่เป็นปัญหา</p>
+    <div class="reveal" id="reveal" hidden>
+      <h2>เฉลยภาพนี้</h2>
+      <p class="verdict" id="verdict"></p>
+      <div id="ansList"></div>
+      <div class="next-row"><button class="btn" id="nextBtn">ภาพถัดไป</button></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= RESULT ================= -->
+<section id="result" class="screen">
+  <div class="card" style="max-width:560px;margin:0 auto">
+    <h2 class="k" style="text-align:center;margin:0;color:var(--navy)">สรุปผลการจับผิด</h2>
+    <div class="big" id="rScore">0</div>
+    <p class="medal" id="rMedal"></p>
+    <div class="stats">
+      <div><b id="rFound">0/0</b><small>จุดที่พบ</small></div>
+      <div><b id="rAcc">0%</b><small>ความแม่นยำ</small></div>
+      <div><b id="rRank">-</b><small>อันดับ</small></div>
+    </div>
+    <div class="row">
+      <button class="btn" id="againBtn" style="flex:1">เล่นอีกครั้ง</button>
+      <button class="btn navy" id="rBoardBtn" style="flex:1">กระดานคะแนน</button>
+    </div>
+  </div>
+</section>
+
+<!-- ================= BOARD ================= -->
+<section id="board" class="screen">
+  <div class="card">
+    <div class="top-row">
+      <h2 class="k">กระดานคะแนน</h2>
+      <button class="btn ghost sm" id="csvBtn">ดาวน์โหลด CSV</button>
+      <button class="btn ghost sm" id="homeBtn">กลับหน้าแรก</button>
+    </div>
+    <div class="tabs">
+      <button class="on" data-tab="all">รายบุคคล</button>
+      <button data-tab="dept">เฉลี่ยรายแผนก</button>
+    </div>
+    <div id="boardBody"></div>
+    <p class="note" style="margin-top:12px">คะแนนบันทึกไว้ในเครื่องที่ใช้เล่น (เหมาะกับจุดตั้งเกมเครื่องเดียว) ·
+      <a href="#" id="resetBoard" style="color:var(--ng)">ล้างกระดานคะแนน</a></p>
+  </div>
+</section>
+
+<!-- ================= EDITOR (?admin=1) ================= -->
+<section id="editor" class="screen">
+  <div class="top-row"><h2 class="k" style="color:#fff;text-shadow:0 3px 0 var(--navy)">โหมดสร้างภาพจับผิด</h2>
+    <button class="btn ghost sm" onclick="location.href=location.pathname">ออกจากโหมดสร้าง</button></div>
+  <div class="ed-grid">
+    <div class="card">
+      <div class="row">
+        <div style="flex:1;min-width:200px"><label for="edFile">1) เลือกรูปจากเครื่อง</label><input type="file" id="edFile" accept="image/*"></div>
+      </div>
+      <label for="edPath">2) ที่อยู่ไฟล์บน GitHub (ตั้งชื่อเดียวกับไฟล์ที่อัปโหลด)</label>
+      <input id="edPath" placeholder="images/line-a.jpg">
+      <div class="row">
+        <div style="flex:1;min-width:160px"><label for="edTitle">ชื่อภาพ</label><input id="edTitle" placeholder="เช่น ไลน์ประกอบ A"></div>
+        <div style="flex:1;min-width:160px"><label for="edArea">พื้นที่/หมวด</label><input id="edArea" placeholder="เช่น Production"></div>
+      </div>
+      <p class="note" style="margin:12px 0 6px">3) แตะบนภาพเพื่อวางวงจุดปัญหา · ลากวงเพื่อย้าย · แตะวงเพื่อเลือกแก้ไข</p>
+      <div class="stage-scroll"><div class="stage edit" id="edStage"><div class="stage-msg" id="edEmpty" style="position:static;min-height:240px">ยังไม่ได้เลือกรูป</div><img id="edImg" alt="" hidden></div></div>
+    </div>
+    <div class="card">
+      <h3 style="margin:0;color:var(--navy)">จุดปัญหาในภาพ</h3>
+      <div id="edSpots"><p class="note">ยังไม่มีจุด แตะบนภาพเพื่อเพิ่ม</p></div>
+      <div class="row" style="margin-top:8px">
+        <button class="btn navy sm" id="edTest">ทดลองเล่นภาพนี้</button>
+        <button class="btn sm" id="edCopy">คัดลอกโค้ด</button>
+      </div>
+      <label for="edCode">4) โค้ดสำหรับวางใน MY_SCENES</label>
+      <textarea id="edCode" class="code" readonly></textarea>
+      <p class="note">นำโค้ดนี้ไปวางในส่วน <b>MY_SCENES</b> ของไฟล์ HTML และอัปโหลดรูปไว้ที่ path เดียวกันใน GitHub</p>
+    </div>
+  </div>
+</section>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =====================================================================
+   ⚙️  ตั้งค่าเกม — แก้ตัวเลขได้ตามต้องการ
+   ===================================================================== */
+const CONFIG = {
+  TIME_PER_SCENE: 45,     // เวลาต่อภาพ (วินาที)
+  MAX_MISS: 3,            // แตะผิดได้กี่ครั้งต่อภาพ
+  POINT_FOUND: 100,       // คะแนนต่อจุดที่หาเจอ
+  BONUS_PER_SEC: 3,       // โบนัสต่อวินาทีที่เหลือ (เมื่อหาครบทุกจุด)
+  HINT_COST: 30,          // หักคะแนนเมื่อกดใบ้
+  HIT_TOLERANCE: 1.25,    // ความใจดีของการแตะ (1 = ต้องแตะในวงพอดี, 1.25 = เผื่อขอบ 25%)
+  SCENES_PER_GAME: 0,     // จำนวนภาพต่อรอบ (0 = เล่นทุกภาพ)
+  SHUFFLE: true,          // สุ่มลำดับภาพ
+  USE_BUILTIN: true,      // ใช้ภาพตัวอย่างที่วาดมาในไฟล์ (false = ใช้เฉพาะ MY_SCENES)
+  DEPARTMENTS: ["Production","QA / QC","Warehouse","Maintenance","Engineering","Planning / PC","Office / อื่นๆ"]
+};
+
+/* =====================================================================
+   🖼️  ภาพของคุณเอง (MY_SCENES)
+   ---------------------------------------------------------------------
+   วิธีเพิ่มภาพจริงจากหน้างาน:
+   1) อัปโหลดรูปไว้ในโฟลเดอร์ images/ ของ repo GitHub เดียวกับไฟล์นี้
+   2) เปิดไฟล์นี้โดยเติม ?admin=1 ต่อท้ายลิงก์ เพื่อเข้าโหมดสร้าง
+      แตะวางจุด พิมพ์ปัญหา/วิธีแก้ แล้วกด "คัดลอกโค้ด"
+   3) วางโค้ดที่คัดลอกไว้ระหว่าง [ และ ] ด้านล่าง (แต่ละภาพคั่นด้วย , )
+   ความหมาย: x,y = ตำแหน่งกลางวง (% ของความกว้าง/สูงภาพ)
+             r   = รัศมีวง (% ของความกว้างภาพ)
+   ===================================================================== */
+const MY_SCENES = [
+  // วางโค้ดจากโหมดสร้างตรงนี้
+];
+
+/* =====================================================================
+   ภาพตัวอย่าง (วาดด้วย SVG) — ไม่ต้องแก้ส่วนนี้
+   ===================================================================== */
+const OL = "#2B3A55";
+const F = "Kanit,Tahoma,sans-serif";
+function svg(inner){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" width="1600" height="1000"><rect width="800" height="500" fill="#EAF4FB"/>${inner}</svg>`}
+function room(floorY, wall="#EAF4FB", floor="#8FC7A2"){
+  let s=`<rect width="800" height="${floorY}" fill="${wall}"/>`;
+  for(let x=0;x<800;x+=100) s+=`<rect x="${x}" y="0" width="2" height="${floorY}" fill="#DCEAF5"/>`;
+  s+=`<rect y="${floorY-12}" width="800" height="12" fill="#C5D6E4"/>`;
+  s+=`<rect y="${floorY}" width="800" height="${500-floorY}" fill="${floor}"/>`;
+  s+=`<path d="M0 ${floorY+30} H800" stroke="#A4D4B4" stroke-width="3"/><path d="M0 ${floorY+80} H800" stroke="#A4D4B4" stroke-width="3"/>`;
+  return s;
+}
+function windowW(x,y,w=110,h=60){return `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="6" fill="#BFE6FA" stroke="${OL}" stroke-width="3"/><path d="M${x+w/2} ${y}V${y+h}M${x} ${y+h/2}H${x+w}" stroke="${OL}" stroke-width="2"/><path d="M${x+10} ${y+h-10} L${x+30} ${y+10}" stroke="#fff" stroke-width="5" opacity=".7"/>`}
+function shadow(cx,cy,rx,ry=7){return `<ellipse cx="${cx}" cy="${cy}" rx="${rx}" ry="${ry}" fill="rgba(30,50,80,.18)"/>`}
+function pallet(x,y,w){return `<rect x="${x}" y="${y}" width="${w}" height="8" fill="#C69157" stroke="${OL}" stroke-width="2"/>`+
+  [0,.45,.9].map(p=>`<rect x="${x+p*(w-14)}" y="${y+8}" width="${14+0*w}" height="10" fill="#A87543" stroke="${OL}" stroke-width="2"/>`).join("")+
+  `<rect x="${x}" y="${y+18}" width="${w}" height="4" fill="#A87543" stroke="${OL}" stroke-width="1.5"/>`}
+function box(x,y,w,h,o={}){
+  let s=`<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${o.fill||"#D8A86A"}" stroke="${OL}" stroke-width="2.5"/>`;
+  s+=`<rect x="${x+w/2-7}" y="${y}" width="14" height="${Math.min(h,22)}" fill="#C08A4E" opacity=".8"/>`;
+  const t=o.tag===undefined?"id":o.tag;
+  if(t==="id") s+=`<rect x="${x+8}" y="${y+h-30}" width="${Math.min(42,w-16)}" height="22" fill="#fff" stroke="${OL}" stroke-width="1.5"/><path d="M${x+12} ${y+h-24}h28M${x+12} ${y+h-19}h20M${x+12} ${y+h-14}h24" stroke="#7A8AA3" stroke-width="2"/>`;
+  if(t==="green"||t==="red"){const c=t==="green"?"#22A55B":"#E5383B";const txt=o.text||(t==="green"?"OK":"NG");
+    s+=`<rect x="${x+8}" y="${y+h-34}" width="${Math.min(52,w-16)}" height="26" rx="3" fill="${c}" stroke="${OL}" stroke-width="1.5"/><text x="${x+8+Math.min(52,w-16)/2}" y="${y+h-15}" font-family="${F}" font-weight="700" font-size="15" fill="#fff" text-anchor="middle">${txt}</text>`;}
+  return s;
+}
+function part(x,y,rot=0,o={}){ // metal bracket
+  let s=`<g transform="translate(${x} ${y}) rotate(${rot})"><rect x="-28" y="-13" width="56" height="26" rx="8" fill="#C9D3DC" stroke="${OL}" stroke-width="2.5"/><circle cx="-12" cy="0" r="5" fill="#8C9AAB" stroke="${OL}" stroke-width="2"/><circle cx="12" cy="0" r="5" fill="#8C9AAB" stroke="${OL}" stroke-width="2"/><path d="M-22 -8h44" stroke="#fff" stroke-width="3" opacity=".7"/>`;
+  if(o.rust) s+=`<circle cx="2" cy="6" r="7" fill="#B5531C" opacity=".85"/><circle cx="20" cy="-4" r="5" fill="#C7652A" opacity=".85"/><circle cx="-20" cy="7" r="4" fill="#A64B19" opacity=".8"/><path d="M-4 -13 l5 8 -6 6 7 12" stroke="${OL}" stroke-width="2.5" fill="none"/>`;
+  return s+`</g>`;
+}
+function gear(cx,cy,r,c="#B8C2CC"){let t="";for(let i=0;i<8;i++){const a=i*Math.PI/4;t+=`<rect x="${cx-4}" y="${cy-r-6}" width="8" height="10" fill="${c}" stroke="${OL}" stroke-width="1.5" transform="rotate(${i*45} ${cx} ${cy})"/>`}
+  return t+`<circle cx="${cx}" cy="${cy}" r="${r}" fill="${c}" stroke="${OL}" stroke-width="2.5"/><circle cx="${cx}" cy="${cy}" r="${r*.35}" fill="#7D8C9E" stroke="${OL}" stroke-width="2"/>`}
+
+const BUILTIN = [
+/* ---------- 1. คลังวัตถุดิบ ---------- */
+{ title:"คลังวัตถุดิบ", area:"Warehouse",
+  svg: svg(room(300)+windowW(40,60)+windowW(640,60)+
+    `<rect x="300" y="40" width="200" height="44" rx="10" fill="#173A6E"/><text x="400" y="70" font-family="${F}" font-size="22" font-weight="700" fill="#fff" text-anchor="middle">WH-A คลังวัตถุดิบ</text>`+
+    `<path d="M20 250 H780" stroke="#E5383B" stroke-width="4" stroke-dasharray="14 8"/><rect x="20" y="226" width="56" height="20" rx="4" fill="#E5383B"/><text x="48" y="241" font-family="${F}" font-size="13" font-weight="700" fill="#fff" text-anchor="middle">MAX</text>`+
+    shadow(150,462,100)+pallet(66,440,168)+box(70,378,80,62)+box(150,378,80,62)+box(70,316,80,62)+box(150,316,80,62,{tag:"none"})+box(70,254,80,62)+box(150,254,80,62)+
+    shadow(380,462,100)+pallet(296,440,168)+[378,316,254,192].map(y=>box(300,y,80,62)+box(380,y,80,62)).join("")+
+    shadow(640,462,95)+box(560,398,80,62)+box(640,398,80,62)+box(560,336,80,62)+box(640,336,80,62)+
+    `<path d="M520 470 l20 -6" stroke="#6B8F78" stroke-width="3"/>`),
+  spots:[
+    {x:190,y:347,r:46,problem:"กล่องไม่มีป้ายชี้บ่ง (Identification Tag)",
+     fix:"ทุกกล่องต้องติดป้ายระบุ Part No., Lot No., จำนวน และวันที่รับเข้า ถ้าพบกล่องไม่มีป้าย ให้แยกไว้ (Hold) และแจ้งหัวหน้าหรือ QA ห้ามนำไปใช้ เพราะของที่ไม่รู้ที่มาจะตรวจสอบย้อนกลับ (Traceability) ไม่ได้"},
+    {x:380,y:222,r:82,problem:"วางซ้อนสูง 4 ชั้น เกินเส้นจำกัดความสูง (MAX)",
+     fix:"วางไม่เกินเส้นระดับสูงสุดที่กำหนด กล่องชั้นล่างรับน้ำหนักเกินจะยุบ ทำให้ชิ้นงานด้านในบิดเสียรูป และเสี่ยงล้มทับคน ให้แยกออกเป็นกองใหม่"},
+    {x:640,y:430,r:84,problem:"วางกล่องบนพื้นโดยตรง ไม่มีพาเลท",
+     fix:"วางบนพาเลทเสมอ เพื่อกันความชื้น ฝุ่น และน้ำมันจากพื้นซึมเข้ากล่องจนชิ้นงานเป็นสนิม และให้รถยกเคลื่อนย้ายได้โดยไม่กระแทกชิ้นงาน"}
+  ]},
+/* ---------- 2. โต๊ะตรวจ QC Gate ---------- */
+{ title:"โต๊ะตรวจ QC Gate", area:"QC Gate",
+  svg: svg(room(330)+windowW(620,50)+
+    `<path d="M400 0V40" stroke="${OL}" stroke-width="3"/><path d="M340 40h120l-20 28h-80z" fill="#FFD23F" stroke="${OL}" stroke-width="3"/>`+
+    `<rect x="455" y="70" width="110" height="140" rx="8" fill="#8A5A2B" stroke="${OL}" stroke-width="3"/><rect x="465" y="84" width="90" height="118" fill="#fff" stroke="${OL}" stroke-width="2"/><rect x="490" y="64" width="40" height="16" rx="4" fill="#B8C2CC" stroke="${OL}" stroke-width="2"/>`+
+    `<text x="510" y="102" font-family="${F}" font-size="12" font-weight="700" fill="${OL}" text-anchor="middle">CHECK SHEET</text>`+
+    [0,1,2,3,4,5].map(i=>`<path d="M472 ${116+i*15}h76" stroke="#C9D6E3" stroke-width="2"/>`+(i<2?`<path d="M532 ${110+i*15} l4 4 8 -9" stroke="#22A55B" stroke-width="3" fill="none"/>`:"")).join("")+
+    shadow(400,472,330,9)+`<rect x="80" y="308" width="16" height="160" fill="#7D8C9E" stroke="${OL}" stroke-width="2"/><rect x="704" y="308" width="16" height="160" fill="#7D8C9E" stroke="${OL}" stroke-width="2"/>`+
+    `<rect x="60" y="290" width="680" height="20" rx="4" fill="#E9EEF3" stroke="${OL}" stroke-width="3"/>`+
+    // OK bin
+    gear(120,222,16)+gear(160,214,16)+gear(200,222,16)+gear(236,216,15)+
+    `<path d="M92 230h180l-12 60h-156z" fill="#22A55B" stroke="${OL}" stroke-width="3"/><text x="182" y="272" font-family="${F}" font-size="24" font-weight="800" fill="#fff" text-anchor="middle">OK</text>`+
+    `<path d="M200 205 l14 -18" stroke="${OL}" stroke-width="2"/><rect x="208" y="170" width="26" height="20" rx="3" fill="#E5383B" stroke="${OL}" stroke-width="2" transform="rotate(-12 221 180)"/><text x="221" y="185" font-family="${F}" font-size="11" font-weight="700" fill="#fff" text-anchor="middle" transform="rotate(-12 221 180)">NG</text>`+
+    // gauge
+    `<rect x="350" y="262" width="100" height="28" rx="4" fill="#5E6B7C" stroke="${OL}" stroke-width="3"/><rect x="394" y="196" width="12" height="70" fill="#B8C2CC" stroke="${OL}" stroke-width="2"/><circle cx="400" cy="200" r="30" fill="#fff" stroke="${OL}" stroke-width="4"/>`+
+    [0,1,2,3,4,5,6,7,8,9].map(i=>`<path d="M400 174v6" stroke="${OL}" stroke-width="2" transform="rotate(${i*36} 400 200)"/>`).join("")+
+    `<path d="M400 200 L414 184" stroke="#E5383B" stroke-width="3"/><rect x="360" y="266" width="52" height="20" rx="3" fill="#E5383B" stroke="#fff" stroke-width="1.5"/><text x="386" y="281" font-family="${F}" font-size="12" font-weight="700" fill="#fff" text-anchor="middle">CAL 03/26</text>`+
+    // NG bin
+    gear(610,222,15)+`<path d="M560 230h170l-12 60h-146z" fill="#E5383B" stroke="${OL}" stroke-width="3"/><text x="645" y="272" font-family="${F}" font-size="24" font-weight="800" fill="#fff" text-anchor="middle">NG</text>`),
+  spots:[
+    {x:205,y:205,r:52,problem:"ชิ้นงาน NG (ติดป้ายแดง) ปนอยู่ในกล่อง OK",
+     fix:"STOP: แยกชิ้นงาน NG ลงกล่องแดงทันที แล้วตรวจกล่อง OK ซ้ำทั้งกล่อง (100%) เพราะอาจมี NG ปนอยู่อีก จากนั้น REPORT หัวหน้าเพื่อหาสาเหตุว่าปนเข้ามาได้อย่างไร"},
+    {x:390,y:255,r:52,problem:"เครื่องมือวัดเลยกำหนดสอบเทียบ (Calibration) — สติกเกอร์ระบุ 03/26",
+     fix:"ห้ามใช้เครื่องมือวัดที่เลยกำหนดสอบเทียบ (Calibration คือการเทียบค่ากับมาตรฐานว่ายังวัดได้แม่นยำ) ให้ส่งสอบเทียบ แจ้ง QA และทบทวนผลที่วัดด้วยเครื่องนี้หลังวันหมดอายุ เพราะค่าที่วัดอาจคลาดเคลื่อน"},
+    {x:510,y:150,r:62,problem:"Check Sheet บันทึกผลไม่ครบ มีช่องว่าง",
+     fix:"บันทึกผลทันทีหลังตรวจทุกครั้ง ห้ามเว้นว่างหรือกรอกย้อนหลัง Check Sheet คือหลักฐานยืนยันคุณภาพต่อลูกค้า ถ้าไม่มีบันทึกเท่ากับไม่ได้ตรวจ"}
+  ]},
+/* ---------- 3. ไลน์ผลิต ---------- */
+{ title:"ไลน์ผลิต – สายพานลำเลียง", area:"Production",
+  svg: svg(room(320)+windowW(60,50)+windowW(260,50)+
+    // machine
+    shadow(690,452,110,10)+`<rect x="600" y="120" width="175" height="330" rx="14" fill="#2B79C2" stroke="${OL}" stroke-width="3"/><rect x="618" y="150" width="70" height="90" rx="6" fill="#BFE6FA" stroke="${OL}" stroke-width="3"/><rect x="705" y="150" width="54" height="70" rx="6" fill="#173A6E" stroke="${OL}" stroke-width="2"/><circle cx="720" cy="170" r="7" fill="#22A55B"/><circle cx="744" cy="170" r="7" fill="#FFD23F"/><circle cx="732" cy="198" r="9" fill="#E5383B" stroke="#fff" stroke-width="2"/>`+
+    `<rect x="740" y="70" width="12" height="50" fill="#7D8C9E" stroke="${OL}" stroke-width="2"/><rect x="734" y="40" width="24" height="14" fill="#E5383B" stroke="${OL}" stroke-width="2"/><rect x="734" y="54" width="24" height="14" fill="#FFD23F" stroke="${OL}" stroke-width="2"/><rect x="734" y="26" width="24" height="14" fill="#22A55B" stroke="${OL}" stroke-width="2"/>`+
+    `<rect x="618" y="260" width="140" height="160" rx="6" fill="#2368AB" stroke="${OL}" stroke-width="2"/><path d="M640 420 q4 14 0 24" stroke="#4A3B2A" stroke-width="5" fill="none"/>`+
+    `<ellipse cx="630" cy="458" rx="72" ry="15" fill="#3D2F22"/><ellipse cx="612" cy="454" rx="30" ry="5" fill="#8E7B63" opacity=".6"/>`+
+    // conveyor
+    [80,250,420,570].map(x=>`<rect x="${x}" y="318" width="14" height="130" fill="#7D8C9E" stroke="${OL}" stroke-width="2"/>`).join("")+shadow(320,452,280,8)+
+    `<rect x="30" y="296" width="580" height="24" rx="12" fill="#3B4656" stroke="${OL}" stroke-width="3"/>`+
+    [50,110,170,230,290,350,410,470,530,590].map(x=>`<circle cx="${x}" cy="308" r="7" fill="#9AA7B6" stroke="${OL}" stroke-width="1.5"/>`).join("")+
+    part(90,282)+part(190,282)+part(290,282)+part(400,282,0,{rust:true})+part(510,282)+
+    part(230,438,24)),
+  spots:[
+    {x:400,y:282,r:44,problem:"ชิ้นงานมีสนิมและรอยร้าว แต่ยังไหลไปบนสายพาน",
+     fix:"SEE IT EARLY → STOP: หยุดสายพาน ดึงชิ้นงานออก ติดป้าย NG แล้ว REPORT หัวหน้า และตรวจชิ้นงานก่อนหน้า-ถัดไปว่ามีปัญหาเดียวกันหรือไม่ (ACT)"},
+    {x:230,y:438,r:46,problem:"ชิ้นงานตกพื้นใต้สายพาน",
+     fix:"ชิ้นงานที่ตกพื้นถือเป็นชิ้นงานต้องสงสัย ห้ามหยิบกลับเข้าไลน์เอง ให้แยกไว้ในพื้นที่ Hold รอ QA ตัดสิน เพราะอาจมีรอยบุบ บิ่น หรือสิ่งปนเปื้อน"},
+    {x:640,y:448,r:66,problem:"น้ำมันรั่วจากเครื่องจักรนองที่พื้น",
+     fix:"แจ้งซ่อมบำรุง (Maintenance) ทันที เช็ดทำความสะอาดและวางป้ายเตือน น้ำมันอาจกระเด็นปนเปื้อนชิ้นงาน และทำให้คนลื่นล้ม และเป็นสัญญาณว่าเครื่องจักรผิดปกติ"}
+  ]},
+/* ---------- 4. พื้นที่บรรจุ ---------- */
+{ title:"พื้นที่บรรจุก่อนส่งลูกค้า", area:"Packing / FG",
+  svg: svg(room(320)+windowW(80,50)+
+    `<rect x="300" y="44" width="230" height="44" rx="10" fill="#173A6E"/><text x="415" y="74" font-family="${F}" font-size="21" font-weight="700" fill="#fff" text-anchor="middle">Lot: A-12 → ลูกค้า</text>`+
+    // table + tray
+    shadow(210,462,180,8)+`<rect x="60" y="308" width="14" height="150" fill="#7D8C9E" stroke="${OL}" stroke-width="2"/><rect x="346" y="308" width="14" height="150" fill="#7D8C9E" stroke="${OL}" stroke-width="2"/><rect x="40" y="290" width="340" height="20" rx="4" fill="#E9EEF3" stroke="${OL}" stroke-width="3"/>`+
+    [0,1,2,3,4,5,6,7].map(i=>i===6?"":`<rect x="${79+i*35}" y="236" width="25" height="40" rx="5" fill="#C9D3DC" stroke="${OL}" stroke-width="2"/><circle cx="${91.5+i*35}" cy="248" r="4" fill="#8C9AAB"/>`).join("")+
+    `<rect x="70" y="256" width="280" height="34" rx="4" fill="#2B79C2" stroke="${OL}" stroke-width="3"/>`+[1,2,3,4,5,6,7].map(i=>`<path d="M${70+i*35} 256v34" stroke="#173A6E" stroke-width="2"/>`).join("")+
+    // pallet cartons
+    shadow(600,462,170,8)+pallet(440,440,320)+
+    [[445,360],[550,360],[655,360],[445,280],[550,280],[655,280]].map(([x,y],i)=>{
+      const wrong=i===4;
+      let s=`<rect x="${x}" y="${y}" width="105" height="80" rx="3" fill="#D8A86A" stroke="${OL}" stroke-width="2.5"/><rect x="${x+45}" y="${y}" width="15" height="20" fill="#C08A4E"/>`;
+      if(i===2){ s+=`<path d="M${x+105} ${y+12} l-22 6 10 10 -16 8 12 14 -10 12 26 18" fill="#B98B52" stroke="${OL}" stroke-width="2.5"/><path d="M${x+86} ${y+30} l12 10" stroke="${OL}" stroke-width="2"/>`;}
+      s+=`<rect x="${x+14}" y="${y+28}" width="64" height="40" fill="#fff" stroke="${OL}" stroke-width="1.5"/><rect x="${x+14}" y="${y+28}" width="64" height="11" fill="${wrong?"#FFD23F":"#2B79C2"}"/><text x="${x+46}" y="${y+60}" font-family="${F}" font-size="18" font-weight="800" fill="${OL}" text-anchor="middle">${wrong?"B-34":"A-12"}</text>`;
+      return s;}).join("")),
+  spots:[
+    {x:300,y:258,r:36,problem:"ถาดบรรจุขาดชิ้นงานไป 1 ชิ้น (ช่องว่าง)",
+     fix:"นับจำนวนให้ครบตามมาตรฐานการบรรจุ (Packing Standard) ก่อนปิดกล่องทุกครั้ง ของขาดถึงมือลูกค้าคือข้อร้องเรียนจากลูกค้า (Customer Complaint) ทันที"},
+    {x:602,y:322,r:52,problem:"ป้ายกล่องเป็น Part No. B-34 ปนอยู่ใน Lot A-12",
+     fix:"ตรวจป้ายทุกกล่องเทียบกับใบสั่งงานก่อนส่ง ป้ายผิดหรือของต่างรุ่นปนกัน (Mixed Part) ทำให้ลูกค้าได้ของผิด ให้แยกกล่องออก ตรวจของภายใน และแจ้ง QA"},
+    {x:735,y:405,r:46,problem:"กล่องฉีกขาด บุบเสียหาย",
+     fix:"เปลี่ยนกล่องใหม่ และตรวจชิ้นงานภายในว่าได้รับความเสียหายหรือไม่ก่อนส่ง กล่องเสียหายทำให้ฝุ่นและความชื้นเข้า และลูกค้าอาจปฏิเสธรับสินค้า"}
+  ]},
+/* ---------- 5. โต๊ะทำงาน 5ส ---------- */
+{ title:"โต๊ะทำงานกับ 5ส", area:"5S",
+  svg: svg(room(330)+windowW(620,40,120,60)+
+    `<rect x="80" y="50" width="260" height="170" rx="8" fill="#F4F7FA" stroke="${OL}" stroke-width="3"/>`+
+    Array.from({length:8},(_,r)=>Array.from({length:13},(_,c)=>`<circle cx="${92+c*20}" cy="${62+r*20}" r="2" fill="#C5D2DE"/>`).join("")).join("")+
+    // hammer present
+    `<g transform="translate(120 80)"><rect x="-6" y="0" width="12" height="100" rx="4" fill="#C69157" stroke="${OL}" stroke-width="2"/><rect x="-22" y="-8" width="44" height="22" rx="4" fill="#7D8C9E" stroke="${OL}" stroke-width="2"/></g>`+
+    // screwdriver present
+    `<g transform="translate(180 80)"><rect x="-8" y="0" width="16" height="44" rx="6" fill="#E5383B" stroke="${OL}" stroke-width="2"/><rect x="-3" y="44" width="6" height="62" fill="#B8C2CC" stroke="${OL}" stroke-width="1.5"/></g>`+
+    // wrench outline empty
+    `<g transform="translate(240 80)"><path d="M-6 10 h12 v96 h-12z M-16 -2 a16 16 0 1 1 32 0 l-8 8 h-16z" fill="none" stroke="#9AA7B6" stroke-width="3" stroke-dasharray="6 4"/></g>`+
+    // pliers present
+    `<g transform="translate(300 80)"><path d="M-10 0 l6 50 -10 56 M10 0 l-6 50 10 56" stroke="${OL}" stroke-width="9" stroke-linecap="round" fill="none"/><path d="M-10 0 l6 50 -10 56 M10 0 l-6 50 10 56" stroke="#2B79C2" stroke-width="5" stroke-linecap="round" fill="none"/></g>`+
+    // bench
+    shadow(400,470,340,8)+`<rect x="80" y="318" width="16" height="150" fill="#7D8C9E" stroke="${OL}" stroke-width="2"/><rect x="704" y="318" width="16" height="150" fill="#7D8C9E" stroke="${OL}" stroke-width="2"/><rect x="60" y="300" width="680" height="20" rx="4" fill="#C69157" stroke="${OL}" stroke-width="3"/>`+
+    // parts tray
+    `<rect x="150" y="270" width="200" height="30" rx="4" fill="#2B79C2" stroke="${OL}" stroke-width="3"/>`+part(195,262,0)+part(255,262,0)+part(315,262,0)+
+    // coffee + snack
+    `<path d="M454 240 h36 l-4 60 h-28z" fill="#fff" stroke="${OL}" stroke-width="3"/><rect x="454" y="250" width="36" height="16" fill="#8A5A2B"/><path d="M490 252 q16 4 0 22" stroke="${OL}" stroke-width="3" fill="none"/><path d="M466 230 q-6 -10 2 -18 M478 230 q-6 -10 2 -18" stroke="#9AA7B6" stroke-width="2.5" fill="none"/>`+
+    `<path d="M506 300 l12 -28 h40 l8 28z" fill="#FFB347" stroke="${OL}" stroke-width="2.5"/><text x="539" y="294" font-family="${F}" font-size="11" font-weight="700" fill="#fff" text-anchor="middle">SNACK</text>`+
+    // chemicals
+    `<path d="M610 300 v-56 q0 -8 8 -8 h16 v-12 h12 v12 h4 q8 0 8 8 v56z" fill="#EAF4FB" stroke="${OL}" stroke-width="3"/><rect x="616" y="256" width="40" height="30" fill="#fff" stroke="${OL}" stroke-width="1.5"/><text x="636" y="276" font-family="${F}" font-size="13" font-weight="700" fill="#173A6E" text-anchor="middle">IPA</text><path d="M636 240 l8 8 -8 8 -8 -8z" fill="#E5383B"/>`+
+    `<path d="M672 300 v-62 q0 -10 10 -10 h10 v-14 h14 v14 h8 q10 0 10 10 v62z" fill="#BFE6FA" stroke="${OL}" stroke-width="3"/><path d="M684 286 h40" stroke="#fff" stroke-width="4" opacity=".7"/>`+
+    // wrench on floor
+    `<g transform="translate(380 440) rotate(-70)"><path d="M-6 10 h12 v80 h-12z" fill="#9AA7B6" stroke="${OL}" stroke-width="2.5"/><path d="M-16 -2 a16 16 0 1 1 32 0 l-8 8 h-16z" fill="#9AA7B6" stroke="${OL}" stroke-width="2.5"/></g>`),
+  spots:[
+    {x:410,y:432,r:56,problem:"ประแจวางทิ้งบนพื้น (ช่องบนบอร์ดเงาว่าง)",
+     fix:"ใช้เสร็จเก็บคืนบอร์ดเงา (Shadow Board) ตามตำแหน่งทุกครั้ง หาเจอง่าย ไม่สูญหาย และป้องกันเครื่องมือตกค้างไปเป็นสิ่งแปลกปลอมในชิ้นงานหรือในเครื่องจักร"},
+    {x:510,y:268,r:62,problem:"แก้วกาแฟและขนมวางบนโต๊ะงานใกล้ชิ้นงาน",
+     fix:"ห้ามนำอาหารและเครื่องดื่มเข้าพื้นที่ผลิต หากหกใส่ชิ้นงานจะเกิดคราบและสนิม ให้รับประทานในพื้นที่ที่จัดไว้เท่านั้น"},
+    {x:693,y:262,r:40,problem:"ขวดสารเคมีไม่มีฉลากระบุชื่อ",
+     fix:"ทุกภาชนะต้องมีฉลากระบุชื่อสารและคำเตือน ถ้าใช้ผิดชนิดอาจทำให้ชิ้นงานเสีย และเป็นอันตรายต่อผู้ใช้ ขวดที่ไม่รู้ว่าเป็นสารอะไรให้แยกออกและแจ้งหัวหน้า"}
+  ]},
+/* ---------- 6. โซนวางงาน OK / NG ---------- */
+{ title:"โซนวางงาน OK / NG", area:"Floor Zoning",
+  svg: svg(room(190)+windowW(80,40)+windowW(610,40)+
+    `<rect x="40" y="250" width="320" height="220" rx="6" fill="none" stroke="#22A55B" stroke-width="7"/><text x="200" y="290" font-family="${F}" font-size="30" font-weight="800" fill="#22A55B" text-anchor="middle" opacity=".9">OK / FG</text>`+
+    `<rect x="460" y="250" width="300" height="220" rx="6" fill="none" stroke="#E5383B" stroke-width="7"/><text x="610" y="290" font-family="${F}" font-size="30" font-weight="800" fill="#E5383B" text-anchor="middle" opacity=".9">NG / HOLD</text>`+
+    `<path d="M378 200V500M442 200V500" stroke="#FFD23F" stroke-width="7"/>`+[240,330,420].map(y=>`<path d="M398 ${y} l12 -18 12 18" stroke="#fff" stroke-width="5" fill="none"/>`).join("")+
+    shadow(110,452,48)+box(68,372,84,78,{tag:"green"})+shadow(200,452,48)+box(158,372,84,78,{tag:"green"})+box(68,300,84,72,{tag:"green"})+
+    shadow(300,452,48)+box(258,372,84,78,{tag:"red",text:"HOLD"})+
+    shadow(410,462,40)+box(372,388,76,72,{tag:"id"})+
+    shadow(530,452,48)+box(488,372,84,78,{tag:"red"})+box(488,300,84,72,{tag:"red"})+
+    shadow(680,452,48)+box(630,372,90,78,{tag:"none"})),
+  spots:[
+    {x:300,y:411,r:52,problem:"กล่องติดป้าย HOLD วางอยู่ในโซน OK",
+     fix:"งาน Hold และงาน NG ต้องอยู่ในโซนสีแดงเท่านั้น ถ้าวางปนในโซน OK เสี่ยงถูกหยิบไปส่งลูกค้า ให้ย้ายทันทีและแจ้ง QA"},
+    {x:410,y:424,r:48,problem:"วางกล่องขวางทางเดิน (เส้นเหลือง)",
+     fix:"ทางเดินต้องโล่งเสมอ ห้ามวางของ เพราะทำให้รถยกและคนเดินชน กล่องอาจถูกชนตกเสียหาย และงานที่ไม่อยู่ในโซนจะไม่รู้ว่าเป็นงาน OK หรือ NG"},
+    {x:675,y:411,r:52,problem:"กล่องในโซน NG ไม่มีป้ายระบุ",
+     fix:"ติดป้าย NG ระบุอาการเสีย จำนวน ผู้พบ และวันที่ทุกครั้ง เพื่อให้วิเคราะห์สาเหตุและตัดสินใจจัดการ (ซ่อม/ทิ้ง/คืนผู้ผลิต) ได้ถูกต้อง"}
+  ]}
+];
+
+/* =====================================================================
+   ตัวเกม — ไม่จำเป็นต้องแก้ส่วนล่างนี้
+   ===================================================================== */
+const $ = s=>document.querySelector(s);
+const LS_KEY="qgc_spot_scores_v1";
+const SFX=(()=>{let ctx;function t(f,d,type="sine",v=.15,delay=0){try{ctx=ctx||new (window.AudioContext||window.webkitAudioContext)();const o=ctx.createOscillator(),g=ctx.createGain();o.type=type;o.frequency.value=f;g.gain.setValueAtTime(v,ctx.currentTime+delay);g.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+delay+d);o.connect(g);g.connect(ctx.destination);o.start(ctx.currentTime+delay);o.stop(ctx.currentTime+delay+d)}catch(e){}}
+  return{ok(){t(660,.12,"triangle");t(990,.18,"triangle",.15,.1)},bad(){t(180,.25,"square",.08)},end(){t(523,.15);t(659,.15,"sine",.15,.15);t(784,.3,"sine",.15,.3)},tick(){t(880,.05,"square",.04)}}})();
+
+function normBuiltin(s){return{title:s.title,area:s.area,img:"data:image/svg+xml;charset=utf-8,"+encodeURIComponent(s.svg),
+  spots:s.spots.map(p=>({x:+(p.x/8).toFixed(2),y:+(p.y/5).toFixed(2),r:+(p.r/8).toFixed(2),problem:p.problem,fix:p.fix}))}}
+function allScenes(){return [...(CONFIG.USE_BUILTIN?BUILTIN.map(normBuiltin):[]),...MY_SCENES]}
+
+let G=null, timerId=null;
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id===id));window.scrollTo(0,0)}
+function toast(msg,bad){const t=$("#toast");t.textContent=msg;t.classList.toggle("bad",!!bad);t.classList.add("show");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("show"),2200)}
+function esc(s){return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+/* ---------- Home ---------- */
+$("#pdept").innerHTML=CONFIG.DEPARTMENTS.map(d=>`<option>${esc(d)}</option>`).join("");
+$("#hPts").textContent=CONFIG.POINT_FOUND;$("#hMiss").textContent=CONFIG.MAX_MISS;$("#hintCost").textContent=CONFIG.HINT_COST;
+try{const last=JSON.parse(localStorage.getItem("qgc_spot_last")||"{}");if(last.name)$("#pname").value=last.name;if(last.dept)$("#pdept").value=last.dept}catch(e){}
+$("#startBtn").onclick=()=>{
+  const name=$("#pname").value.trim(); if(!name){$("#startErr").textContent="กรอกชื่อก่อนเริ่มเล่น";$("#pname").focus();return}
+  $("#startErr").textContent="";
+  try{localStorage.setItem("qgc_spot_last",JSON.stringify({name,dept:$("#pdept").value}))}catch(e){}
+  let list=allScenes(); if(!list.length){$("#startErr").textContent="ยังไม่มีภาพในเกม เพิ่มภาพใน MY_SCENES หรือเปิด USE_BUILTIN";return}
+  if(CONFIG.SHUFFLE) list=list.sort(()=>Math.random()-.5);
+  if(CONFIG.SCENES_PER_GAME>0) list=list.slice(0,CONFIG.SCENES_PER_GAME);
+  startGame(list,{name,dept:$("#pdept").value});
+};
+$("#boardBtn").onclick=()=>{renderBoard("all");show("board")};
+
+/* ---------- Game ---------- */
+function startGame(scenes,player,testMode){
+  G={scenes,player,idx:0,score:0,found:0,total:scenes.reduce((a,s)=>a+s.spots.length,0),taps:0,hits:0,testMode};
+  show("game");loadScene();
+}
+function loadScene(){
+  const sc=G.scenes[G.idx];
+  G.cur={sc,found:new Set(),miss:0,time:CONFIG.TIME_PER_SCENE,done:false};
+  $("#gIdx").textContent=`ภาพที่ ${G.idx+1}/${G.scenes.length} · ${sc.area||""}`;
+  $("#gTitle").textContent=sc.title||"";
+  $("#gScore").textContent=G.score;
+  $("#gPrompt").textContent=`แตะจุดที่เป็นปัญหา (${sc.spots.length} จุด)`;
+  $("#reveal").hidden=true;$("#hintBtn").disabled=false;
+  const st=$("#stage");st.querySelectorAll(".mk,.x,.stage-msg").forEach(e=>e.remove());st.classList.remove("playing");
+  updStatus();$("#timerBar").style.width="100%";$("#timer").classList.remove("low");
+  const img=$("#sceneImg");
+  img.onload=()=>{st.classList.add("playing");startTimer()};
+  img.onerror=()=>{const m=document.createElement("div");m.className="stage-msg";m.style.position="static";m.style.minHeight="240px";
+    m.innerHTML=`ไม่พบไฟล์ภาพ <b>${esc(sc.img)}</b><br>ตรวจว่าอัปโหลดรูปไว้ใน GitHub ที่ path นี้แล้ว`;st.appendChild(m);finishScene("noimg")};
+  img.src=sc.img;
+}
+function updStatus(){
+  const c=G.cur;
+  $("#gDots").innerHTML=c.sc.spots.map((_,i)=>`<span class="${c.found.has(i)?"got":""}"></span>`).join("")+` <b>${c.found.size}/${c.sc.spots.length}</b>`;
+  $("#gHearts").textContent="❤️".repeat(Math.max(0,CONFIG.MAX_MISS-c.miss))+"🤍".repeat(Math.min(CONFIG.MAX_MISS,c.miss));
+}
+function startTimer(){
+  clearInterval(timerId);
+  timerId=setInterval(()=>{
+    const c=G.cur;if(c.done)return clearInterval(timerId);
+    c.time-=.25;const p=Math.max(0,c.time/CONFIG.TIME_PER_SCENE*100);
+    $("#timerBar").style.width=p+"%";$("#timer").classList.toggle("low",c.time<=10);
+    if(c.time<=10&&Math.abs(c.time-Math.round(c.time))<.01&&c.time>0)SFX.tick();
+    if(c.time<=0)finishScene("time");
+  },250);
+}
+function addMarker(stage,s,cls,num){
+  const m=document.createElement("div");m.className="mk "+cls;
+  m.style.left=s.x+"%";m.style.top=s.y+"%";m.style.width=(s.r*2)+"%";
+  if(num)m.innerHTML=`<span class="num">${num}</span>`;
+  stage.appendChild(m);return m;
+}
+$("#stage").addEventListener("pointerdown",e=>{
+  const c=G&&G.cur; if(!c||c.done||!$("#stage").classList.contains("playing"))return;
+  const rect=$("#sceneImg").getBoundingClientRect();
+  const px=(e.clientX-rect.left)/rect.width*100, py=(e.clientY-rect.top)/rect.height*100;
+  if(px<0||px>100||py<0||py>100)return;
+  G.taps++;
+  let best=-1,bd=1e9;
+  c.sc.spots.forEach((s,i)=>{
+    const dx=(px-s.x)/100*rect.width, dy=(py-s.y)/100*rect.height, d=Math.hypot(dx,dy);
+    const lim=s.r/100*rect.width*CONFIG.HIT_TOLERANCE;
+    if(d<=lim&&d<bd){bd=d;best=i}
+  });
+  if(best>=0&&!c.found.has(best)){
+    c.found.add(best);G.hits++;G.found++;G.score+=CONFIG.POINT_FOUND;
+    addMarker($("#stage"),c.sc.spots[best],"found",best+1);SFX.ok();
+    toast(`+${CONFIG.POINT_FOUND} เจอแล้ว: ${c.sc.spots[best].problem}`);
+    $("#gScore").textContent=G.score;updStatus();
+    if(c.found.size===c.sc.spots.length)finishScene("all");
+  }else if(best>=0){toast("จุดนี้หาเจอแล้ว ลองหาจุดอื่น")}
+  else{
+    c.miss++;SFX.bad();
+    const x=document.createElement("div");x.className="x";x.textContent="✕";x.style.left=px+"%";x.style.top=py+"%";$("#stage").appendChild(x);setTimeout(()=>x.remove(),1200);
+    updStatus();
+    if(c.miss>=CONFIG.MAX_MISS)finishScene("miss");else toast(`ไม่ใช่จุดนี้ เหลือโอกาส ${CONFIG.MAX_MISS-c.miss} ครั้ง`,true);
+  }
+});
+$("#hintBtn").onclick=()=>{
+  const c=G.cur;if(c.done)return;
+  const left=c.sc.spots.map((s,i)=>i).filter(i=>!c.found.has(i));if(!left.length)return;
+  const s=c.sc.spots[left[Math.floor(Math.random()*left.length)]];
+  // วงใบ้ใหญ่กว่าจริง และเยื้องตำแหน่งเล็กน้อย
+  const h={x:s.x+(Math.random()-.5)*s.r,y:s.y+(Math.random()-.5)*s.r,r:s.r*2.4};
+  const m=addMarker($("#stage"),h,"hint");setTimeout(()=>m.remove(),1900);
+  G.score=Math.max(0,G.score-CONFIG.HINT_COST);$("#gScore").textContent=G.score;
+};
+$("#zoomBtn").onclick=()=>{const z=$("#stage").classList.toggle("zoom");$("#zoomBtn").setAttribute("aria-pressed",z);$("#zoomBtn").textContent=z?"🔍 ย่อ":"🔍 ขยาย"};
+
+function finishScene(reason){
+  const c=G.cur;if(c.done)return;c.done=true;clearInterval(timerId);
+  $("#stage").classList.remove("playing");$("#hintBtn").disabled=true;
+  let bonus=0;
+  if(reason==="all"){bonus=Math.round(Math.max(0,c.time)*CONFIG.BONUS_PER_SEC);G.score+=bonus;$("#gScore").textContent=G.score;SFX.end()}
+  const st=$("#stage");st.querySelectorAll(".mk").forEach(e=>e.remove());
+  const marks=c.sc.spots.map((s,i)=>addMarker(st,s,c.found.has(i)?"found":"missed",i+1));
+  const msg={all:`ยอดเยี่ยม! หาครบทุกจุด ได้โบนัสเวลา +${bonus}`,time:"หมดเวลา",miss:"แตะผิดครบจำนวนครั้งแล้ว",noimg:"ข้ามภาพนี้"}[reason];
+  $("#verdict").textContent=`${msg} · พบ ${c.found.size} จาก ${c.sc.spots.length} จุด (วงเขียว = หาเจอ, วงแดง = ยังไม่เจอ)`;
+  $("#gPrompt").textContent="แตะรายการด้านล่างเพื่อดูตำแหน่งในภาพ";
+  $("#ansList").innerHTML=c.sc.spots.map((s,i)=>`<div class="ans ${c.found.has(i)?"f":"m"}" data-i="${i}" tabindex="0">
+    <div class="n">${i+1}</div><div class="p">${esc(s.problem)}</div>
+    <div class="fix"><b>วิธีที่ถูกต้อง:</b> ${esc(s.fix)}</div></div>`).join("");
+  $("#ansList").querySelectorAll(".ans").forEach(a=>{const f=()=>{
+    $("#ansList").querySelectorAll(".ans").forEach(x=>x.classList.toggle("on",x===a));
+    marks.forEach((m,i)=>m.classList.toggle("focus",i==a.dataset.i));
+    $(".stage-scroll").scrollIntoView({behavior:"smooth",block:"center"})};
+    a.onclick=f;a.onkeydown=e=>{if(e.key==="Enter")f()}});
+  $("#nextBtn").textContent=G.idx+1<G.scenes.length?"ภาพถัดไป":(G.testMode?"กลับไปโหมดสร้าง":"ดูผลคะแนน");
+  $("#reveal").hidden=false;
+  if(reason!=="noimg")setTimeout(()=>toast(reason==="all"?"หาครบแล้ว!":msg,reason!=="all"),50);
+}
+$("#nextBtn").onclick=()=>{
+  if(G.idx+1<G.scenes.length){G.idx++;loadScene()}
+  else if(G.testMode){show("editor")}
+  else endGame();
+};
+
+/* ---------- Result & Board ---------- */
+function getScores(){try{return JSON.parse(localStorage.getItem(LS_KEY)||"[]")}catch(e){return[]}}
+function setScores(a){try{localStorage.setItem(LS_KEY,JSON.stringify(a))}catch(e){}}
+function endGame(){
+  const acc=G.taps?Math.round(G.hits/G.taps*100):0;
+  const entry={id:Date.now(),name:G.player.name,dept:G.player.dept,score:G.score,found:G.found,total:G.total,acc,date:new Date().toLocaleString("th-TH")};
+  const all=getScores();all.push(entry);setScores(all);
+  const sorted=[...all].sort((a,b)=>b.score-a.score);const rank=sorted.findIndex(e=>e.id===entry.id)+1;
+  $("#rScore").textContent=G.score;$("#rFound").textContent=`${G.found}/${G.total}`;$("#rAcc").textContent=acc+"%";$("#rRank").textContent=`#${rank}`;
+  const pct=G.found/G.total;
+  $("#rMedal").textContent=pct===1?"🏆 ตาเหยี่ยว! ไม่มีปัญหาไหนรอดสายตา":pct>=.75?"🥇 ตาไวมาก เกือบครบทุกจุด":pct>=.5?"🥈 ดีแล้ว ฝึกสังเกตเพิ่มอีกนิด":"🥉 ลองอีกรอบ อ่านเฉลยแล้วจะเห็นเร็วขึ้น";
+  G.lastId=entry.id;show("result");SFX.end();
+}
+$("#againBtn").onclick=()=>show("home");
+$("#rBoardBtn").onclick=()=>{renderBoard("all");show("board")};
+$("#homeBtn").onclick=()=>show("home");
+document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>renderBoard(b.dataset.tab));
+function renderBoard(tab){
+  document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
+  const all=getScores();const body=$("#boardBody");
+  if(!all.length){body.innerHTML=`<p class="empty">ยังไม่มีคะแนน มาเป็นคนแรกที่จับผิดได้ครบ!</p>`;return}
+  if(tab==="all"){
+    const s=[...all].sort((a,b)=>b.score-a.score).slice(0,50);
+    body.innerHTML=`<table><tr><th>#</th><th>ชื่อ</th><th>แผนก</th><th class="r">พบ</th><th class="r">คะแนน</th></tr>`+
+      s.map((e,i)=>`<tr class="${G&&e.id===G.lastId?"me":""}"><td>${i<3?["🥇","🥈","🥉"][i]:i+1}</td><td>${esc(e.name)}</td><td>${esc(e.dept)}</td><td class="r">${e.found}/${e.total}</td><td class="r"><b>${e.score}</b></td></tr>`).join("")+`</table>`;
+  }else{
+    const m={};all.forEach(e=>{(m[e.dept]=m[e.dept]||{n:0,s:0,f:0,t:0});m[e.dept].n++;m[e.dept].s+=e.score;m[e.dept].f+=e.found;m[e.dept].t+=e.total});
+    const rows=Object.entries(m).map(([d,v])=>({d,n:v.n,avg:Math.round(v.s/v.n),pf:Math.round(v.f/v.t*100)})).sort((a,b)=>b.avg-a.avg);
+    body.innerHTML=`<table><tr><th>#</th><th>แผนก</th><th class="r">ผู้เล่น</th><th class="r">หาเจอ</th><th class="r">คะแนนเฉลี่ย</th></tr>`+
+      rows.map((r,i)=>`<tr><td>${i+1}</td><td>${esc(r.d)}</td><td class="r">${r.n}</td><td class="r">${r.pf}%</td><td class="r"><b>${r.avg}</b></td></tr>`).join("")+`</table>`;
+  }
+}
+$("#csvBtn").onclick=()=>{
+  const rows=[["ชื่อ","แผนก","คะแนน","จุดที่พบ","จุดทั้งหมด","ความแม่นยำ(%)","วันเวลา"],...getScores().map(e=>[e.name,e.dept,e.score,e.found,e.total,e.acc,e.date])];
+  const csv="\ufeff"+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
+  const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="spot-the-defect-scores.csv";a.click();
+};
+$("#resetBoard").onclick=e=>{e.preventDefault();if(confirm("ล้างคะแนนทั้งหมดในเครื่องนี้?")){setScores([]);renderBoard("all")}};
+
+/* ---------- Editor (?admin=1) ---------- */
+const ED={spots:[],sel:-1,imgURL:""};
+function edRender(){
+  const st=$("#edStage");st.querySelectorAll(".mk").forEach(e=>e.remove());
+  ED.spots.forEach((s,i)=>{const m=addMarker(st,s,"ed"+(i===ED.sel?" sel":""),i+1);m.dataset.i=i;
+    m.addEventListener("pointerdown",ev=>{ev.stopPropagation();ED.sel=i;edDrag(ev,i);edList();st.querySelectorAll(".mk").forEach(k=>k.classList.toggle("sel",k.dataset.i==i))})});
+  edCode();
+}
+function edDrag(ev,i){
+  const rect=$("#edImg").getBoundingClientRect();const tgt=ev.target.closest(".mk");tgt.setPointerCapture(ev.pointerId);
+  const mv=e=>{ED.spots[i].x=+Math.min(100,Math.max(0,(e.clientX-rect.left)/rect.width*100)).toFixed(1);ED.spots[i].y=+Math.min(100,Math.max(0,(e.clientY-rect.top)/rect.height*100)).toFixed(1);tgt.style.left=ED.spots[i].x+"%";tgt.style.top=ED.spots[i].y+"%"};
+  const up=()=>{tgt.removeEventListener("pointermove",mv);tgt.removeEventListener("pointerup",up);edCode()};
+  tgt.addEventListener("pointermove",mv);tgt.addEventListener("pointerup",up);
+}
+function edList(){
+  const box=$("#edSpots");
+  if(!ED.spots.length){box.innerHTML=`<p class="note">ยังไม่มีจุด แตะบนภาพเพื่อเพิ่ม</p>`;return}
+  box.innerHTML=ED.spots.map((s,i)=>`<div class="spot-ed ${i===ED.sel?"sel":""}" data-i="${i}">
+    <div class="row"><b style="flex:1;color:var(--navy)">จุดที่ ${i+1}</b>
+      <label style="margin:0;font-weight:600;font-size:14px">ขนาดวง</label><input type="range" min="2" max="20" step=".5" value="${s.r}" data-k="r" style="width:110px;padding:0">
+      <button class="btn ghost sm" data-del="${i}">ลบ</button></div>
+    <label>ปัญหาที่พบ</label><input data-k="problem" value="${esc(s.problem)}" placeholder="เช่น ชิ้นงาน NG ปนในกล่อง OK">
+    <label>วิธีที่ถูกต้อง</label><textarea data-k="fix" placeholder="อธิบายสิ่งที่ควรทำ และเหตุผล">${esc(s.fix)}</textarea></div>`).join("");
+  box.querySelectorAll(".spot-ed").forEach(d=>{const i=+d.dataset.i;
+    d.querySelectorAll("[data-k]").forEach(inp=>inp.oninput=()=>{const k=inp.dataset.k;ED.spots[i][k]=k==="r"?+inp.value:inp.value;if(k==="r")edRender();else edCode()});
+    d.onclick=e=>{if(e.target.dataset.del!==undefined){ED.spots.splice(+e.target.dataset.del,1);ED.sel=-1;edList();edRender()}};
+  });
+}
+function edScene(){return{title:$("#edTitle").value||"ภาพใหม่",area:$("#edArea").value||"",img:$("#edPath").value||"images/ชื่อไฟล์.jpg",spots:ED.spots.map(s=>({x:s.x,y:s.y,r:s.r,problem:s.problem,fix:s.fix}))}}
+function edCode(){
+  const s=edScene();
+  $("#edCode").value=`{\n  title: ${JSON.stringify(s.title)},\n  area: ${JSON.stringify(s.area)},\n  img: ${JSON.stringify(s.img)},\n  spots: [\n`+
+    s.spots.map(p=>`    { x: ${p.x}, y: ${p.y}, r: ${p.r},\n      problem: ${JSON.stringify(p.problem)},\n      fix: ${JSON.stringify(p.fix)} }`).join(",\n")+`\n  ]\n},`;
+}
+function initEditor(){
+  show("editor");
+  $("#edFile").onchange=e=>{const f=e.target.files[0];if(!f)return;
+    if(ED.imgURL)URL.revokeObjectURL(ED.imgURL);ED.imgURL=URL.createObjectURL(f);
+    $("#edImg").src=ED.imgURL;$("#edImg").hidden=false;$("#edEmpty").remove&&$("#edEmpty")&&$("#edEmpty").remove();
+    if(!$("#edPath").value)$("#edPath").value="images/"+f.name;edCode()};
+  ["#edPath","#edTitle","#edArea"].forEach(s=>$(s).oninput=edCode);
+  $("#edStage").addEventListener("pointerdown",e=>{
+    if($("#edImg").hidden||e.target.closest(".mk"))return;
+    const rect=$("#edImg").getBoundingClientRect();
+    const x=(e.clientX-rect.left)/rect.width*100,y=(e.clientY-rect.top)/rect.height*100;if(x<0||x>100||y<0||y>100)return;
+    ED.spots.push({x:+x.toFixed(1),y:+y.toFixed(1),r:6,problem:"",fix:""});ED.sel=ED.spots.length-1;edRender();edList();
+    const inp=$(`.spot-ed[data-i="${ED.sel}"] input[data-k="problem"]`);if(inp)inp.focus({preventScroll:true});
+  });
+  $("#edCopy").onclick=async()=>{try{await navigator.clipboard.writeText($("#edCode").value);toast("คัดลอกโค้ดแล้ว")}catch(e){$("#edCode").select();document.execCommand("copy");toast("คัดลอกโค้ดแล้ว")}};
+  $("#edTest").onclick=()=>{
+    if($("#edImg").hidden)return toast("เลือกรูปก่อน",true);
+    if(!ED.spots.length)return toast("วางจุดปัญหาอย่างน้อย 1 จุด",true);
+    const s=edScene();s.img=ED.imgURL;startGame([s],{name:"ทดสอบ",dept:"-"},true);
+  };
+  edCode();
+}
+if(new URLSearchParams(location.search).has("admin"))initEditor();
+</script>
+</body>
+</html>
