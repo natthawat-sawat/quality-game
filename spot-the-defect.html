@@ -128,6 +128,8 @@ tr.me td{background:#FFF3E2;font-weight:700}
 .empty{text-align:center;color:var(--muted);padding:24px 0}
 .top-row{display:flex;align-items:center;gap:8px;margin-bottom:10px}
 .top-row h2{flex:1;margin:0;color:var(--navy)}
+.board-head{flex-wrap:wrap}
+@media(max-width:560px){.board-head h2{order:-1;flex-basis:100%}.board-head .btn{flex:1}}
 
 /* ---------- Editor ---------- */
 .ed-grid{display:grid;gap:14px;grid-template-columns:1fr}
@@ -235,18 +237,21 @@ tr.me td{background:#FFF3E2;font-weight:700}
 <!-- ================= BOARD ================= -->
 <section id="board" class="screen">
   <div class="card">
-    <div class="top-row">
+    <div class="top-row board-head">
+      <button class="btn ghost sm" id="homeBtn">🏠 หน้าหลัก</button>
       <h2 class="k">กระดานคะแนน</h2>
       <button class="btn ghost sm" id="csvBtn">ดาวน์โหลด CSV</button>
-      <button class="btn ghost sm" id="homeBtn">กลับหน้าแรก</button>
     </div>
     <div class="tabs">
       <button class="on" data-tab="all">รายบุคคล</button>
       <button data-tab="dept">เฉลี่ยรายแผนก</button>
     </div>
     <div id="boardBody"></div>
-    <p class="note" style="margin-top:12px">คะแนนบันทึกไว้ในเครื่องที่ใช้เล่น (เหมาะกับจุดตั้งเกมเครื่องเดียว) ·
-      <a href="#" id="resetBoard" style="color:var(--ng)">ล้างกระดานคะแนน</a></p>
+    <div class="row" style="margin-top:16px">
+      <button class="btn" id="homeBtn2" style="flex:1">กลับหน้าหลัก</button>
+    </div>
+    <p class="note" style="margin-top:12px">หาครบกันไหมน้าาาา~  ·
+      <a href="#" id="resetBoard" style="color:var(--ng)">( •̯́ ₃ •̯̀)</a></p>
   </div>
 </section>
 
@@ -731,7 +736,7 @@ async function openBoard(){
   try{await remoteLoad()}catch(e){REMOTE=null;toast("โหลดคะแนนรวมไม่สำเร็จ แสดงคะแนนในเครื่องนี้แทน",true)}
   renderBoard(document.querySelector(".tabs button.on").dataset.tab);
 }
-$("#homeBtn").onclick=()=>show("home");
+$("#homeBtn").onclick=$("#homeBtn2").onclick=()=>show("home");
 document.querySelectorAll(".tabs button").forEach(b=>b.onclick=()=>renderBoard(b.dataset.tab));
 function renderBoard(tab){
   document.querySelectorAll(".tabs button").forEach(b=>b.classList.toggle("on",b.dataset.tab===tab));
