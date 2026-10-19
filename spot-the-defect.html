@@ -758,10 +758,6 @@ $("#csvBtn").onclick=()=>{
   const csv="\ufeff"+rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(",")).join("\n");
   const a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="spot-the-defect-scores.csv";a.click();
 };
-$("#resetBoard").onclick=e=>{e.preventDefault();
-  if(SHEET_URL){alert("คะแนนเก็บอยู่ใน Google Sheet ให้ลบแถวใน tab \"จับผิดภาพ\" (เหลือแถวหัวตารางไว้)");return}
-  if(confirm("ล้างคะแนนทั้งหมดในเครื่องนี้?")){setScores([]);renderBoard("all")}};
-if(SHEET_URL){const n=document.querySelector("#board .note");if(n)n.firstChild.textContent="คะแนนรวมจากทุกเครื่อง บันทึกใน Google Sheet (tab จับผิดภาพ) · ";}
 
 /* ---------- Editor (?admin=1) ---------- */
 const ED={spots:[],sel:-1,imgURL:""};
